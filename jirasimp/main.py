@@ -14,9 +14,9 @@ import json
 
 from dotenv import load_dotenv
 
-from jirasimp import get_jira_worklogs
+from jirasimp import get_jira_worklogs, Jira
 from jirasimp.compare import comparison
-from simplicate import get_simplicate_worklogs
+from simplicate import get_simplicate_worklogs, simplicate
 from utilities import format_item
 
 
@@ -35,8 +35,10 @@ if __name__ == "__main__":
     #period = Period('2022-05-02','2022-05-03')
 
     report_mapping = get_report_mapping()
-    jira_worklogs, report_data = get_jira_worklogs(year, month, report_mapping)
-    simplicate_worklogs = get_simplicate_worklogs(year, month, report_mapping)
+    jira = Jira()
+    jira_worklogs, report_data = get_jira_worklogs(jira, year, month, report_mapping)
+    sim = simplicate()
+    simplicate_worklogs = get_simplicate_worklogs(sim, year, month, report_mapping)
 
     #for report_name in get_report_mapping().keys():
         #report(report_name, year, month, jira_labels, issues)

@@ -74,18 +74,17 @@ def simplicate() -> Simplicate:
 #         result += [values]
 #     return result
 
-def get_simplicate_worklogs(year, month, report_mapping):
+def get_simplicate_worklogs(sim: Simplicate, year: int, month: int, report_mapping: dict):
     period = month_in_weeks(year, month)
     simplicate_worklogs = {}
     for report_name, mapping in report_mapping.items():
-        sw, unspecified_worklogs = simplicate_hours(report_name, period, mapping)
+        sw, unspecified_worklogs = simplicate_hours(sim, report_name, period, mapping)
         simplicate_worklogs.update(sw)
     return simplicate_worklogs
 
 
 
-def simplicate_hours( report_name, period: Period, mapping):
-    sim = simplicate()
+def simplicate_hours( sim: Simplicate, report_name: str, period: Period, mapping):
     worklogs_by_id = {}
     unspecified_worklogs = []
 

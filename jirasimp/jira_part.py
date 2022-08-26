@@ -44,7 +44,7 @@ class Jira:
         return full_result
 
 
-def get_data_from_jira(report_name, period, mapping):
+def get_data_from_jira(jira: Jira, report_name: str, period: Period, mapping: dict):
     issues = {}
     worklogs = {}
     jira_labels = []
@@ -56,7 +56,7 @@ def get_data_from_jira(report_name, period, mapping):
             jira_label = ""
         if not jira_project:
             continue  # Entry met alleen Simplicate part. Is om Simplicate issues daaruit te moven
-        project_issues = jira_issues_with_worklogs(jira_project, jira_label, period)
+        project_issues = jira_issues_with_worklogs(jira, jira_project, jira_label, period)
         worklogs.update(worklogs_with_services(project_issues, jira_project, period))
         issues.update(project_issues)
         if jira_label:
@@ -64,8 +64,7 @@ def get_data_from_jira(report_name, period, mapping):
     return issues, worklogs, jira_labels
 
 
-def jira_issues_with_worklogs(project: str, label: str, period: Period):
-    jira = Jira()
+def jira_issues_with_worklogs(jira: Jira, project: str, label: str, period: Period):
     jql = f'search?jql=project={project} AND worklogDate>="{period.fromday}" AND worklogDate<"{period.untilday}"' + \
         f'&fields=worklog,labels,summary,status,timespent,priority,issuetype,customfield_10447'
     issues = jira.request(jql, collect_field='issues')
@@ -82,7 +81,7 @@ def jira_issues_with_worklogs(project: str, label: str, period: Period):
         # Mmm, it appears that this query returns a maximum amount of worklogs per issue
         # If there are more, request the full set of worklogs separately
         if issue['fields']['worklog']['total'] > issue['fields']['worklog']['maxResults']:
-            issue['fields']['worklog']['worklogs'] = get_full_worklog_from_issue(issue['key'])
+            issue['fields']['worklog']['worklogs'] = get_full_worklog_from_issue(jira, issue['key'])
         issue['worklogs'] = issue['fields']['worklog']['worklogs']
 
         if issue['fields']['customfield_10447']:
@@ -108,9 +107,8 @@ def jira_issues_with_worklogs(project: str, label: str, period: Period):
     return {issue['key']: issue for issue in issues}
 
 
-def get_full_worklog_from_issue(issue_key: str):
+def get_full_worklog_from_issue(jira, issue_key: str):
     """Returns all worklogs for an issue"""
-    jira = Jira()
     # todo: add startedAfter en startedBefore Unix timestamp parameters
     res = jira.request(f'issue/{issue_key}/worklog', collect_field='worklogs')
     return res
@@ -197,12 +195,12 @@ def parse_comment(comment):
         return " ".join([parse_comment(subcontent) for subcontent in content['content']])
 
 
-def get_jira_worklogs(year, month, report_mapping):
+def get_jira_worklogs(jira:Jira, year: int, month: int, report_mapping: dict):
     period = month_in_weeks(year, month)
     jira_worklogs = {}
     report_data = {}
     for report_name, mapping in report_mapping.items():
-        issues, jw, jira_labels = get_data_from_jira(report_name, period, mapping)
+        issues, jw, jira_labels = get_data_from_jira(jira, report_name, period, mapping)
         jira_worklogs.update(jw)
         report_data[report_name] = {}
         report_data[report_name]['issues'] = issues
