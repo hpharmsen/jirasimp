@@ -7,7 +7,10 @@ from justdays import Period, Day
 from pysimplicate import Simplicate
 
 # Simplicate singleton
-from .utilities import get_report_mapping, month_in_weeks
+try:
+    from .utilities import month_in_weeks
+except ImportError:
+    from utilities import month_in_weeks
 
 _simplicate = None
 
@@ -71,25 +74,24 @@ def simplicate() -> Simplicate:
 #         result += [values]
 #     return result
 
-def get_simplicate_worklogs(year, month):
+def get_simplicate_worklogs(year, month, report_mapping):
     period = month_in_weeks(year, month)
     simplicate_worklogs = {}
-    for report_name in get_report_mapping().keys():
-        sw, unspecified_worklogs = simplicate_hours(report_name, period)
+    for report_name, mapping in report_mapping.items():
+        sw, unspecified_worklogs = simplicate_hours(report_name, period, mapping)
         simplicate_worklogs.update(sw)
     return simplicate_worklogs
 
 
 
-def simplicate_hours( report_name, period:Period):
+def simplicate_hours( report_name, period: Period, mapping):
     sim = simplicate()
-    report_mapping = get_report_mapping()[report_name]
     worklogs_by_id = {}
     unspecified_worklogs = []
 
     # Collect all Simplicate projects involved in this report
     simplicate_projects = []
-    for jira_part, simplicate_part in report_mapping.items():
+    for jira_part, simplicate_part in mapping.items():
         simplicate_projects += simplicate_part.split(',')
 
     for simplicate_project in simplicate_projects:

@@ -10,16 +10,6 @@ USER_MAPPING = {
 }  # Map Simplicate name to oberon id
 
 
-def get_report_mapping():
-    try:
-        return report_mapping
-    except:
-        pass
-    with open('mapping.json') as mapping_file:
-        reporting_units = json.load(mapping_file)
-    return reporting_units
-
-
 def month_in_weeks(year: int, month: int) -> Period:
     """Returns a period spanning a fixed number of weeks which roughly cover the month"""
     def snap_to_closest_monday(day: Day) -> Day:

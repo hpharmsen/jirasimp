@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import json
 
 # todo: - Label per klant
 # - Apart label voor Doorontwikkelbudget,
@@ -18,6 +19,13 @@ from jirasimp.compare import comparison
 from simplicate import get_simplicate_worklogs
 from utilities import format_item
 
+
+def get_report_mapping():
+    with open('mapping.json') as mapping_file:
+        reporting_units = json.load(mapping_file)
+    return reporting_units
+
+
 if __name__ == "__main__":
     load_dotenv()
     year = 2022
@@ -26,8 +34,9 @@ if __name__ == "__main__":
     #period = month_in_weeks(year, month)
     #period = Period('2022-05-02','2022-05-03')
 
-    jira_worklogs, report_data = get_jira_worklogs(year, month)
-    simplicate_worklogs = get_simplicate_worklogs(year, month)
+    report_mapping = get_report_mapping()
+    jira_worklogs, report_data = get_jira_worklogs(year, month, report_mapping)
+    simplicate_worklogs = get_simplicate_worklogs(year, month, report_mapping)
 
     #for report_name in get_report_mapping().keys():
         #report(report_name, year, month, jira_labels, issues)

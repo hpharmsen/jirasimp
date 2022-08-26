@@ -7,7 +7,7 @@ from requests.auth import HTTPBasicAuth
 
 from justdays import Day, Period
 
-from .utilities import get_report_mapping, month_in_weeks
+from .utilities import month_in_weeks
 
 
 class Jira:
@@ -44,12 +44,11 @@ class Jira:
         return full_result
 
 
-def get_data_from_jira(report_name, period):
+def get_data_from_jira(report_name, period, mapping):
     issues = {}
     worklogs = {}
     jira_labels = []
-    report_mapping = get_report_mapping()[report_name]
-    for jira_part, simplicate_part in report_mapping.items():
+    for jira_part, simplicate_part in mapping.items():
         try:
             jira_project, jira_label = jira_part.split('/')
         except ValueError:
@@ -198,12 +197,12 @@ def parse_comment(comment):
         return " ".join([parse_comment(subcontent) for subcontent in content['content']])
 
 
-def get_jira_worklogs(year, month):
+def get_jira_worklogs(year, month, report_mapping):
     period = month_in_weeks(year, month)
     jira_worklogs = {}
     report_data = {}
-    for report_name in get_report_mapping().keys():
-        issues, jw, jira_labels = get_data_from_jira(report_name, period)
+    for report_name, mapping in report_mapping.items():
+        issues, jw, jira_labels = get_data_from_jira(report_name, period, mapping)
         jira_worklogs.update(jw)
         report_data[report_name] = {}
         report_data[report_name]['issues'] = issues
