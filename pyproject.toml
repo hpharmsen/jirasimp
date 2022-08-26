@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "jirasimp"
-version = "0.2.4"
+version = "0.2.5"
 description = "Synchronizes hours booked in Jira with Simplicate"
 readme = "README.md"
 authors = [{ name = "HP Harmsen", email = "hph@oberon.nl" }]
