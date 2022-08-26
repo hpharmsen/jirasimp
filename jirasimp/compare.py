@@ -7,21 +7,21 @@ def comparison(jira_worklogs: dict, simplicate_worklogs: dict):
     keys.sort()
     for key in keys:
         # Nu kunnen er vier dingen het geval zijn:
-        # 1. key zit helemaal niet in Jira -> Report en vraag wat nu?
-        # 2. key zit helemaal niet in Simplicate -> Report en vraag wat nu?
-        # 3. key zit in Jira+tag en in Simplicate+service en de uren kloppen -> Doe niks
-        # 4. key zit in Jira+tag en in Simplicsate+service en de uren kloppen niet -> Update de uren in Simplicate
+        # 1. key zit helemaal niet in Jira → Report en vraag wat nu?
+        # 2. key zit helemaal niet in Simplicate → Report en vraag wat nu?
+        # 3. key zit in Jira+tag en in Simplicate+service en de uren kloppen → Doe niks
+        # 4. key zit in Jira+tag en in Simplicsate+service en de uren kloppen niet → Update de uren in Simplicate
         # 5. Mismatch tussen Jira+tag en Simplicate+service -> Omboeken in Simplicate
 
         jira = jira_worklogs.get(key)
         simp = simplicate_worklogs.get(key)
         if not jira:
-            # Ad 1. key zit helemaal niet in Jira -> Report en vraag wat nu?
+            # Ad 1. key zit helemaal niet in Jira → Report en vraag wat nu?
             missing_from_jira += [key]
             continue
 
         if not simp:
-            # Ad 2. key zit helemaal niet in Simplicate -> Report en vraag wat nu?
+            # Ad 2. key zit helemaal niet in Simplicate → Report en vraag wat nu?
             missing_from_simplicate += [key]
             continue
 
@@ -31,10 +31,10 @@ def comparison(jira_worklogs: dict, simplicate_worklogs: dict):
         if simp['project_and_service'].startswith(
                 jira['project_and_service']):  # Simplicate can contain a service where Jira doesn't
             if jira['hours'] == simp['hours']:
-                # Ad 3. key zit in Jira+tag en in Simplicate+service en de uren kloppen -> Doe niks
+                # Ad 3. key zit in Jira+tag en in Simplicate+service en de uren kloppen → Doe niks
                 continue
             else:
-                # 4. key zit in Jira+tag en in Simplicsate+service en de uren kloppen niet -> Update de uren in Simplicate
+                # 4. key zit in Jira+tag en in Simplicsate+service en de uren kloppen niet → Update uren in Simplicate
                 update = {
                     'simplicate_hours_id': simp['simplicate_hours_id'],
                     'old_hours': simp['hours'],

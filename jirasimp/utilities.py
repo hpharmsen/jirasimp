@@ -1,5 +1,4 @@
 import json
-from collections import namedtuple
 
 from justdays import Day, Period
 
@@ -17,17 +16,17 @@ def get_report_mapping():
     return reporting_units
 
 
-def month_in_weeks(year:int, month:int) -> Period:
+def month_in_weeks(year: int, month: int) -> Period:
     """Returns a period spanning a fixed number of weeks which roughly cover the month"""
-    def snap_to_closest_monday(day:Day) -> Day:
-        if day.day_of_week() in (1,2): # Tuesday or Wednesday
-            day = day.last_monday() # Move start of the period back to the last Monday
-        elif day.day_of_week() >= 3: # Thursday to Sunday
-            day = day.plus_weeks(1).last_monday() # Move start of the period forward to the next Monday
+    def snap_to_closest_monday(day: Day) -> Day:
+        if day.day_of_week() in (1, 2):  # Tuesday or Wednesday
+            day = day.last_monday()  # Move start of the period back to the last Monday
+        elif day.day_of_week() >= 3:  # Thursday to Sunday
+            day = day.plus_weeks(1).last_monday()  # Move start of the period forward to the next Monday
         return day
 
     first_day = snap_to_closest_monday(Day(year, month, 1))
-    last_day = snap_to_closest_monday(Day(year, month, 1).plus_months(1)) # First day of next month
+    last_day = snap_to_closest_monday(Day(year, month, 1).plus_months(1))  # First day of next month
 
     return Period(first_day, last_day)
 

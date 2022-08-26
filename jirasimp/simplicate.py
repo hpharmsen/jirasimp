@@ -12,7 +12,7 @@ from .utilities import get_report_mapping, month_in_weeks
 _simplicate = None
 
 
-def simplicate():
+def simplicate() -> Simplicate:
     global _simplicate
     if not _simplicate:
         key = os.environ["simplicate_api_key"]

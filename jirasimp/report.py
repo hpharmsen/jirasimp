@@ -28,27 +28,27 @@ def report(report_name, year, month, labels, issues: dict):
     fill_range(worksheet, 3, 1, [f"Werkzaamheden van week {start_week} t/m {end_week} ({period.fromday.strftime('%d-%m')} t/m {period.untilday.prev().strftime('%d-%m')})"])
 
     # Column headers
-    FIRST_DATA_ROW = 5
-    fill_range(worksheet, FIRST_DATA_ROW, 1, ['Jira issue', 'Type', 'Summary', 'Total time spent', 'Time spent', 'T-shirt size', 'Status', 'Labels'])
-    format_range(worksheet, f"A{FIRST_DATA_ROW}:H{FIRST_DATA_ROW}", bold=True)
+    first_data_row = 5
+    fill_range(worksheet, first_data_row, 1, ['Jira issue', 'Type', 'Summary', 'Total time spent', 'Time spent', 'T-shirt size', 'Status', 'Labels'])
+    format_range(worksheet, f"A{first_data_row}:H{first_data_row}", bold=True)
 
     # Issue keys
     for index, jira_key in enumerate(issues.keys()):
-        row = index + FIRST_DATA_ROW + 1
+        row = index + first_data_row + 1
         worksheet.update_cell(row, 1, f'=HYPERLINK("https://teamoberon.atlassian.net/browse/{jira_key}","{jira_key}")')
 
     # Data
     data = [[issue['issuetype'], issue['summary'], issue['timespent_total'], issue['timespent'], issue['tshirt_size'], issue['status'], ', '.join(issue['labels'])] for issue in issues.values()]
-    fill_range(worksheet, FIRST_DATA_ROW+1, 2, data)
+    fill_range(worksheet, first_data_row+1, 2, data)
     set_column_width(worksheet, 'C', 500)
     set_column_width(worksheet, 'D', 120)
-    format_range(worksheet, f"D{FIRST_DATA_ROW}:E200", align="RIGHT")
-    format_range(worksheet, f"F{FIRST_DATA_ROW}:G200", align="CENTER")
+    format_range(worksheet, f"D{first_data_row}:E200", align="RIGHT")
+    format_range(worksheet, f"F{first_data_row}:G200", align="CENTER")
 
     # Total
     if data:
-        total_row = FIRST_DATA_ROW + len(issues) + 1
-        worksheet.update(f"E{total_row}", f'=SUM(E{FIRST_DATA_ROW+1}:E{total_row-1})', value_input_option='USER_ENTERED')
+        total_row = first_data_row + len(issues) + 1
+        worksheet.update(f"E{total_row}", f'=SUM(E{first_data_row+1}:E{total_row-1})', value_input_option='USER_ENTERED')
         format_range(worksheet, f"E{total_row}", bold=True)
 
     # Timestamp
@@ -61,5 +61,5 @@ def report(report_name, year, month, labels, issues: dict):
     worksheet_url = f"{spreadsheet_url}/edit#gid={worksheet.id}"
     contents_sheet = spreadsheet.worksheet('inhoud')
     contents_sheet.update('A2', f'Travelbase werkzaamheden voor label {report_name}')
-    format_range(contents_sheet, "A2", font_size=18, bold=True  )
+    format_range(contents_sheet, "A2", font_size=18, bold=True)
     contents_sheet.update_cell(month+3, year-2021, f'=HYPERLINK("{worksheet_url}","{worksheet_name}")')
