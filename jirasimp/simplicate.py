@@ -111,8 +111,11 @@ def simplicate_hours( sim: Simplicate, report_name: str, period: Period, mapping
                 hours = json.load(f)
         else:
             hours = sim.hours(filter)
-            with open(filename, 'w') as f:
-                json.dump(hours, f)
+            try:
+                with open(filename, 'w') as f:
+                    json.dump(hours, f)
+            except FileNotFoundError:
+                pass
         for index in range(len(hours)):
             try:
                 hours_entry = hours[index] # Kromme ouderwetse manier maar met for entry in hours crasht ie op de laatste
