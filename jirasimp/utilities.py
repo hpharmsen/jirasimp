@@ -11,6 +11,10 @@ USER_MAPPING = {
 
 
 def get_report_mapping():
+    try:
+        return report_mapping
+    except:
+        pass
     with open('mapping.json') as mapping_file:
         reporting_units = json.load(mapping_file)
     return reporting_units
