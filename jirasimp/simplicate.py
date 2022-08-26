@@ -7,7 +7,7 @@ from justdays import Period, Day
 from pysimplicate import Simplicate
 
 # Simplicate singleton
-from .utilities import get_report_mapping
+from .utilities import get_report_mapping, month_in_weeks
 
 _simplicate = None
 
@@ -70,6 +70,16 @@ def simplicate():
 #                 continue
 #         result += [values]
 #     return result
+
+def get_simplicate_worklogs(year, month):
+    period = month_in_weeks(year, month)
+    simplicate_worklogs = {}
+    for report_name in get_report_mapping().keys():
+        sw, unspecified_worklogs = simplicate_hours(report_name, period)
+        simplicate_worklogs.update(sw)
+    return simplicate_worklogs
+
+
 
 def simplicate_hours( report_name, period:Period):
     sim = simplicate()

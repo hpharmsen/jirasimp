@@ -198,3 +198,16 @@ def parse_comment(comment):
         if content.get('text'):
             return content['text']
         return " ".join([parse_comment(subcontent) for subcontent in content['content']])
+
+
+def get_jira_worklogs(year, month):
+    period = month_in_weeks(year, month)
+    jira_worklogs = {}
+    report_data = {}
+    for report_name in get_report_mapping().keys():
+        issues, jw, jira_labels = get_data_from_jira(report_name, period)
+        jira_worklogs.update(jw)
+        report_data[report_name] = {}
+        report_data[report_name]['issues'] = issues
+        report_data[report_name]['jira_labels'] = jira_labels
+    return jira_worklogs, report_data
