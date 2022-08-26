@@ -1,0 +1,9 @@
+__pycache__/
+jira2simplicate/cache/
+jira2simplicate/oauth_key.json
+src/
+venv/
+.DS_Store
+.env
+.envrc
+.idea/

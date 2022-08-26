@@ -1,0 +1,33 @@
+[build-system]
+requires      = ["setuptools>=61.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "jirasimp"
+version = "0.2.0"
+description = "Synchronizes hours booked in Jira with Simplicate"
+readme = "README.md"
+authors = [{ name = "HP Harmsen", email = "hph@oberon.nl" }]
+license = { file = "LICENSE" }
+classifiers = [
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+]
+keywords = []
+dependencies = [
+    "jira",
+    "python-dotenv",
+    "gspread",
+    "gspread-formatting",
+    "justdays",
+    "hplib",
+    "pysimplicate"
+]
+requires-python = ">=3.7"
+
+[project.optional-dependencies]
+dev = ["black", "pytest", "build", "twine"]
+
+[project.urls]
+Homepage = "https://github.com/hpharmsen/jirasimp"
+

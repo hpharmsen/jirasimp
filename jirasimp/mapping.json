@@ -1,0 +1,38 @@
+{
+  "Texel": {
+    "T0/Texel": "TRAV-20",
+    "TEX/": "TRAV-20",
+    "": "TRAV-11, TRAV-100"
+  },
+
+  "Terschelling": {
+    "T0/Terschelling": "TER-2/Doorontwikkeling Terschelling website",
+    "VTW": "TER-2/Doorontwikkeling Terschelling website"
+  },
+
+  "Ameland": {
+    "T0/ameland": "TRAV-13"
+  },
+
+  "Schiermonnikoog": {
+    "T0/schiermonnikoog": "TRAV-14"
+  },
+
+  "Waterland van Friesland": {
+    "T0/waterland": "VWF-4"
+  },
+
+  "Uit in de Regio": {
+    "T0/Uitinderegio": "UIR-1"
+  },
+
+  "Non billable": {
+    "T0/zomer": "TRAV-11/Internal Summer project 2022",
+    "T0/internal": "TRAV-11/Internal Q3 & Q4"
+  },
+
+  "Doorontwikkelbudget": {
+    "T0/": "TRAV-11/Development Q3"
+  }
+}
+
