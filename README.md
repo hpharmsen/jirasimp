@@ -2,4 +2,4 @@
 
 Zorgt dat Simplicate up-to-date is met uren geboekt op issues in Jira
 
-Current version: 0.11.0
+Current version: 0.12.0
