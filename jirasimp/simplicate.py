@@ -7,7 +7,7 @@ from justdays import Period, Day
 from pysimplicate import Simplicate
 
 # Simplicate singleton
-from utilities import get_report_mapping
+from .utilities import get_report_mapping
 
 _simplicate = None
 

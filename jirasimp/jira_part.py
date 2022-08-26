@@ -1,9 +1,14 @@
+""" Handling the Jira side of things """
 import json
 import os
 import sys
-
 import requests
 from requests.auth import HTTPBasicAuth
+
+from justdays import Day, Period
+
+from .utilities import get_report_mapping
+
 
 class Jira:
     def __init__(self, server=None, token=None, email=None):
@@ -37,13 +42,6 @@ class Jira:
                 break
             start_at += amount_returned
         return full_result
-
-""" Handling the Jira side of things """
-from justdays import Day, Period
-import json
-
-from utilities import get_report_mapping
-
 
 def get_data_from_jira(report_name, period):
     issues = {}

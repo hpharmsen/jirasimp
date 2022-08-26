@@ -4,7 +4,7 @@ from gspread_formatting import set_column_width
 
 from googlesheet import fill_range, format_range, create_worksheet, get_spreadsheet
 
-from utilities import month_in_weeks
+from .utilities import month_in_weeks
 
 
 def report(report_name, year, month, labels, issues: dict):
