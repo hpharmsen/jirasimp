@@ -44,10 +44,11 @@ class Jira:
         return full_result
 
 
-def get_data_from_jira(jira: Jira, report_name: str, period: Period, mapping: dict):
+def get_data_from_jira(jira: Jira, report_name: str, period: Period, report_mapping: dict):
     issues = {}
     worklogs = {}
     jira_labels = []
+    mapping = report_mapping[report_name]
     for jira_part, simplicate_part in mapping.items():
         try:
             jira_project, jira_label = jira_part.split('/')
@@ -57,7 +58,7 @@ def get_data_from_jira(jira: Jira, report_name: str, period: Period, mapping: di
         if not jira_project:
             continue  # Entry met alleen Simplicate part. Is om Simplicate issues daaruit te moven
         project_issues = jira_issues_with_worklogs(jira, jira_project, jira_label, period)
-        worklogs.update(worklogs_with_services(project_issues, jira_project, period))
+        worklogs.update(worklogs_with_services(report_mapping, project_issues, jira_project, period))
         issues.update(project_issues)
         if jira_label:
             jira_labels += [jira_label]
@@ -114,10 +115,10 @@ def get_full_worklog_from_issue(jira, issue_key: str):
     return res
 
 
-def worklogs_with_services(issues: dict, jira_project: str, period: Period):
+def worklogs_with_services(report_mapping: dict, issues: dict, jira_project: str, period: Period):
     """ Returns a list of JiraWorklog named tuples """
 
-    mapping = read_flattened_mapping()
+    mapping = flattened_mapping(report_mapping)
 
     worklogs = {}
     for issue_key in issues.keys():
@@ -174,15 +175,12 @@ def worklogs_with_services(issues: dict, jira_project: str, period: Period):
     return worklogs
 
 
-def read_flattened_mapping():
+def flattened_mapping(report_mapping):
     """ Reads the jira projects+keys and simplicate services from the mapping file
         and returns them in a single dictionary """
-
-    with open('mapping.json') as mapping_file:
-        projects = json.load(mapping_file).values()
-        mapping = {}
-        for project_dict in projects:
-            mapping.update(project_dict)
+    mapping = {}
+    for project_dict in report_mapping.values():
+        mapping.update(project_dict)
     return mapping
 
 
@@ -199,8 +197,8 @@ def get_jira_worklogs(jira:Jira, year: int, month: int, report_mapping: dict):
     period = month_in_weeks(year, month)
     jira_worklogs = {}
     report_data = {}
-    for report_name, mapping in report_mapping.items():
-        issues, jw, jira_labels = get_data_from_jira(jira, report_name, period, mapping)
+    for report_name in report_mapping.keys():
+        issues, jw, jira_labels = get_data_from_jira(jira, report_name, period, report_mapping)
         jira_worklogs.update(jw)
         report_data[report_name] = {}
         report_data[report_name]['issues'] = issues
