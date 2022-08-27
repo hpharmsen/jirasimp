@@ -44,11 +44,24 @@ class Jira:
         return full_result
 
 
-def get_data_from_jira(jira: Jira, report_name: str, period: Period, report_mapping: dict):
+def get_jira_worklogs(jira:Jira, year: int, month: int, report_mapping: dict):
+    jira_worklogs = {}
+    report_data = {}
+    for report_name in report_mapping.keys():
+        issues, jw, jira_labels = get_data_from_jira(jira, report_name, year, month, report_mapping)
+        jira_worklogs.update(jw)
+        report_data[report_name] = {}
+        report_data[report_name]['issues'] = issues
+        report_data[report_name]['jira_labels'] = jira_labels
+    return jira_worklogs, report_data
+
+
+def get_data_from_jira(jira: Jira, report_name: str, year, month, report_mapping: dict):
+    mapping = report_mapping[report_name]
+    period = month_in_weeks(year, month)
     issues = {}
     worklogs = {}
     jira_labels = []
-    mapping = report_mapping[report_name]
     for jira_part, simplicate_part in mapping.items():
         try:
             jira_project, jira_label = jira_part.split('/')
@@ -193,14 +206,3 @@ def parse_comment(comment):
         return " ".join([parse_comment(subcontent) for subcontent in content['content']])
 
 
-def get_jira_worklogs(jira:Jira, year: int, month: int, report_mapping: dict):
-    period = month_in_weeks(year, month)
-    jira_worklogs = {}
-    report_data = {}
-    for report_name in report_mapping.keys():
-        issues, jw, jira_labels = get_data_from_jira(jira, report_name, period, report_mapping)
-        jira_worklogs.update(jw)
-        report_data[report_name] = {}
-        report_data[report_name]['issues'] = issues
-        report_data[report_name]['jira_labels'] = jira_labels
-    return jira_worklogs, report_data

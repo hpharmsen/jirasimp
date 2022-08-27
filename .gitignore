@@ -9,3 +9,4 @@ venv/
 .idea/
 dist/
 jirasimp.egg-info/
+jirasimp/oauth_key.json

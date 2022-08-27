@@ -1,3 +1,4 @@
+import json
 import os
 import sys
 import time
@@ -9,8 +10,17 @@ from google.auth.transport.requests import AuthorizedSession
 from google.oauth2.service_account import Credentials
 from gspread import Worksheet
 
+counted = 0
+def count():
+    global counted
+    counted +=1
+    print(counted)
+    if counted==60:
+        print( 'sleeping for 1 minute')
+        time.sleep(60)
+        counted = 0
 
-def get_spreadsheet(sheet_name):
+def get_spreadsheet(sheet_name, authentication_info=None):
     # oAuth authentication. Json file created using explanation at:
     # http://gspread.readthedocs.org/en/latest/oauth2.html
     # Updated call since v2.0: See https://github.com/google/oauth2client/releases/tag/v2.0.0
@@ -24,7 +34,10 @@ def get_spreadsheet(sheet_name):
     # Latest version from:
     # https://stackoverflow.com/questions/51618127/credentials-object-has-no-attribute-access-token-when-using-google-auth-wi
     key_file = Path(__file__).resolve().parent / "oauth_key.json"
-    credentials = Credentials.from_service_account_file(key_file)
+    if not authentication_info:
+        with open( key_file) as f:
+            authentication_info = json.load(f)
+    credentials = Credentials.from_service_account_info(authentication_info)
     scoped_credentials = credentials.with_scopes(scopes)
     gc = gspread.Client(auth=scoped_credentials)
     gc.session = AuthorizedSession(scoped_credentials)
@@ -68,8 +81,8 @@ def get_spreadsheet(sheet_name):
     return spreadsheet
 
 
-def create_worksheet(spreadsheet_name, worksheet_name, rows, cols):
-    spreadsheet = get_spreadsheet(spreadsheet_name)
+def create_worksheet(spreadsheet_name, worksheet_name, rows, cols, authentication_info):
+    spreadsheet = get_spreadsheet(spreadsheet_name, authentication_info)
     try:
         old_worksheet = spreadsheet.worksheet(worksheet_name)
         old_worksheet.update_title("old")
@@ -83,6 +96,12 @@ def create_worksheet(spreadsheet_name, worksheet_name, rows, cols):
     return worksheet
 
 
+def update_cell(sheet_tab: Worksheet, cell, contents, value_input_option=None):
+    sheet_tab.update(cell, contents, value_input_option=value_input_option)
+    #time.sleep(1)
+    count()
+
+
 def fill_range(sheet_tab: Worksheet, row: int, col: int, data: list):
     if not data:
         return
@@ -93,9 +112,15 @@ def fill_range(sheet_tab: Worksheet, row: int, col: int, data: list):
         row, col, row + len(data) - 1, col + len(data[0]) - 1
     )  # row, col, lastrow, lastcol
     for cell in cell_list:
-        cell.simplicate_part = data[cell.row - row][cell.col - col]
+        try:
+            cell.value = data[cell.row - row][cell.col - col]
+        except IndexError:
+            continue
     # Update in batch
-    sheet_tab.update_cells(cell_list)
+    sheet_tab.update_cells(cell_list, value_input_option='USER_ENTERED')
+    #time.sleep(1)
+    print('fillrange')
+    count()
 
 
 def format_range(sheet_tab: Worksheet, range:str, bold=None, font_size=None, align=None, font_color=None, background_color:tuple=None):
@@ -128,5 +153,10 @@ def format_range(sheet_tab: Worksheet, range:str, bold=None, font_size=None, ali
         }
 
     sheet_tab.format(range, format)
+    print('format')
+    count()
+    #time.sleep(1)
 
 
+if __name__ == "__main__":
+    s = get_spreadsheet('Travelbase maandrapporten - Texel')
