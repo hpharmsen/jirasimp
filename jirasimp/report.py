@@ -2,12 +2,14 @@ import datetime
 
 from gspread_formatting import set_column_width
 
-from googlesheet import fill_range, format_range, create_worksheet, get_spreadsheet, update_cell
+from .googlesheet import fill_range, format_range, create_worksheet, get_spreadsheet, update_cell
 
 try:
     from .utilities import month_in_weeks
+    from .googlesheet import fill_range, format_range, create_worksheet, get_spreadsheet, update_cell
 except ImportError:
     from utilities import month_in_weeks
+    from googlesheet import fill_range, format_range, create_worksheet, get_spreadsheet, update_cell
 
 def report(report_name, year, month, labels, issues: dict, authentication_info=None):
 
